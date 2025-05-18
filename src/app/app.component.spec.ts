@@ -22,68 +22,67 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-
-  // Tests supplémentaires pour le TP
-
-  it('doit afficher le titre <h2>', () => {
+  it('should display the title in <h2>', () => {
     const h2 = fixture.nativeElement.querySelector('h2');
-    expect(h2?.textContent).toContain('Liste des utilisateurs');
+    expect(h2?.textContent).toContain('User liste');
   });
 
-  it('doit afficher les utilisateurs existants', () => {
+  it('should display initial users', () => {
     component.users = ['Alice', 'Bob'];
     fixture.detectChanges();
-    const li = fixture.nativeElement.querySelectorAll('li');
-    expect(li.length).toBe(2);
-    expect(li[0].textContent).toContain('Alice');
-    expect(li[1].textContent).toContain('Bob');
+    const listItems = fixture.nativeElement.querySelectorAll('li');
+    expect(listItems.length).toBe(2);
+    expect(listItems[0].textContent).toContain('Alice');
+    expect(listItems[1].textContent).toContain('Bob');
   });
 
-  it('doit afficher "Aucun utilisateurs dans la liste" si la liste est vide', () => {
+  it('should show empty message if user list is empty', () => {
     component.users = [];
     fixture.detectChanges();
-    const msg = fixture.nativeElement.querySelector('p');
-    expect(msg?.textContent).toContain('Aucun utilisateurs dans la liste');
+    const message = fixture.nativeElement.querySelector('p');
+    expect(message?.textContent).toContain('Aucun utilisateur disponible');
   });
 
-  it('doit ajouter un utilisateur à la liste', () => {
+  it('should add a user to the list', () => {
     component.users = [];
     fixture.detectChanges();
 
     const input = fixture.debugElement.query(By.css('input')).nativeElement;
     input.value = 'Charlie';
     input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
-    const addButton = fixture.debugElement.queryAll(By.css('button'))[2];
+    const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
     addButton.nativeElement.click();
     fixture.detectChanges();
 
-    const li = fixture.nativeElement.querySelectorAll('li');
-    expect(li.length).toBe(1);
-    expect(li[0].textContent).toContain('Charlie');
+    const listItems = fixture.nativeElement.querySelectorAll('li');
+    expect(listItems.length).toBe(1);
+    expect(listItems[0].textContent).toContain('Charlie');
   });
 
-  it('doit vider la liste', () => {
-    component.users = ['A', 'B'];
+  it('should remove the last user', () => {
+    component.users = ['User1', 'User2'];
     fixture.detectChanges();
 
-    const viderButton = fixture.debugElement.queryAll(By.css('button'))[1];
-    viderButton.nativeElement.click();
-    fixture.detectChanges();
-
-    expect(component.users.length).toBe(0);
-    const msg = fixture.nativeElement.querySelector('p');
-    expect(msg?.textContent).toContain('Aucun utilisateurs dans la liste');
-  });
-
-  it('doit supprimer un utilisateur', () => {
-    component.users = ['X', 'Y'];
-    fixture.detectChanges();
-
-    const supprimerButton = fixture.debugElement.queryAll(By.css('button'))[0];
-    supprimerButton.nativeElement.click();
+    const removeButton = fixture.debugElement.queryAll(By.css('button'))[1];
+    removeButton.nativeElement.click();
     fixture.detectChanges();
 
     expect(component.users.length).toBe(1);
+    expect(component.users).toEqual(['User1']);
+  });
+
+  it('should clear all users', () => {
+    component.users = ['User1', 'User2'];
+    fixture.detectChanges();
+
+    const clearButton = fixture.debugElement.queryAll(By.css('button'))[2];
+    clearButton.nativeElement.click();
+    fixture.detectChanges();
+
+    expect(component.users.length).toBe(0);
+    const message = fixture.nativeElement.querySelector('p');
+    expect(message?.textContent).toContain('Aucun utilisateur disponible');
   });
 });
